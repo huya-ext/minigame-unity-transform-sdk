@@ -1,0 +1,13 @@
+{
+    "name": "com.huya.minigame",
+    "displayName": "HYSDK",
+    "description": "Huya Mini Game Unity Engine Adapter SDK Package.",
+    "version": "1.0.0",
+    "unity": "2022.3",
+    "unityRelease": "57f1",
+    "keywords": [
+        "Unity",
+        "HY"
+    ],
+    "dependencies": {}
+}
