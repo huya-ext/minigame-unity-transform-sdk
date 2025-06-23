@@ -23,6 +23,16 @@ namespace HuyaWASM
             HYSDKManagerHandler.Instance.Invoke(functionName, option);
         }
 
+        public static void CallJSFunction(string sdkName, string functionName, params object[] args)
+        {
+            HYSDKManagerHandler.CallJSFunction(sdkName, functionName, args);
+        }
+
+        public static string CallJSFunctionWithReturn(string sdkName, string functionName, params object[] args)
+        {
+            return HYSDKManagerHandler.CallJSFunctionWithReturn(sdkName, functionName, args);
+        }
+
         /// <summary>
         /// [hy.getWindowInfo()](https://dev.huya.com/docs/miniapp/dev/game/api/#%E8%8E%B7%E5%8F%96%E7%AA%97%E5%8F%A3%E4%BF%A1%E6%81%AF)
         /// 获取窗口信息
@@ -57,6 +67,15 @@ namespace HuyaWASM
         public static void GetUserInfo(GetUserInfoOption callback)
         {
             HYSDKManagerHandler.Instance.GetUserInfo(callback);
+        }
+
+        /// <summary>
+        /// 获取主播昵称和头像
+        /// hy.getStreamerInfo(Object object)
+        /// </summary>
+        public static void GetStreamerInfo(GetStreamerInfoOption callback)
+        {
+            HYSDKManagerHandler.Instance.GetStreamerInfo(callback);
         }
         
         /// <summary>

@@ -147,6 +147,59 @@ namespace HuyaWASM
 	}
 
 	[Preserve]
+	public class GetStreamerInfoOption : ICallback<GetStreamerInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>
+	{
+		/// <summary>
+		/// 接口调用结束的回调函数（调用成功、失败都会执行）
+		/// </summary>
+		public Action<GeneralCallbackResult> complete { get; set; }
+
+		/// <summary>
+		/// 接口调用失败的回调函数
+		/// </summary>
+		public Action<GeneralCallbackResult> fail { get; set; }
+
+		/// <summary>
+		/// 接口调用成功的回调函数
+		/// </summary>
+		public Action<GetStreamerInfoSuccessCallbackResult> success { get; set; }
+	}
+
+	[Preserve]
+	public class GetStreamerInfoSuccessCallbackResult
+	{
+		/// <summary>
+		/// 主播昵称
+		/// </summary>
+		public string streamerNick;
+
+		/// <summary>
+		/// 主播头像地址
+		/// </summary>
+		public string streamerAvatarUrl;
+
+		/// <summary>
+		/// 主播性别；取值说明: 1 表示男; 2 表示女
+		/// </summary>
+		public int streamerSex;
+
+		/// <summary>
+		/// 主播等级
+		/// </summary>
+		public int streamerLevel;
+
+		/// <summary>
+		/// 房间Id
+		/// </summary>
+		public int streamerRoomId;
+
+		/// <summary>
+		/// 主播unionId，没有则为空
+		/// </summary>
+		public string streamerUnionId;
+	}
+
+	[Preserve]
 	public class GetSystemInfoAsyncOption : ICallback<SystemInfo, GeneralCallbackResult, GeneralCallbackResult>
 	{
 		/// <summary>

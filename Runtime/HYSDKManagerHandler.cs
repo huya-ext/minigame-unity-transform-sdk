@@ -186,7 +186,9 @@ namespace HuyaWASM
 							complete(JsonMapper.ToObject<GeneralCallbackResult>(res));
 						}
                         tconfig.complete = null;
-                    } else {
+                    } 
+                    else 
+                    {
                         if (type == "success") 
                         {
                             Action<string> success = tconfig.success;
@@ -286,6 +288,21 @@ namespace HuyaWASM
 		public void GetUserInfoCallback(string msg)
 		{
 			this.OneWayCallback<GetUserInfoOption, GetUserInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>(msg, GetUserInfoOptionList);
+		}
+
+        private Dictionary<string, GetStreamerInfoOption> GetStreamerInfoOptionList;
+        public void GetStreamerInfo(GetStreamerInfoOption option)
+		{
+			if (GetStreamerInfoOptionList == null) 
+            {
+                GetStreamerInfoOptionList = new Dictionary<string, GetStreamerInfoOption>();
+            }
+            this.OneWayFunction<GetStreamerInfoOption, GetStreamerInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>("GetStreamerInfo", option, GetStreamerInfoOptionList);
+		}
+
+		public void GetStreamerInfoCallback(string msg)
+		{
+			this.OneWayCallback<GetStreamerInfoOption, GetStreamerInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>(msg, GetStreamerInfoOptionList);
 		}
 #endregion
 
