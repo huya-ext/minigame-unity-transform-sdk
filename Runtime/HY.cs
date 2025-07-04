@@ -98,31 +98,15 @@ namespace HuyaWASM
         }
 
         /// <summary>
-        /// [hy.startGame(Object gameInfo)](https://dev.huya.com/docs/miniapp/dev/game/api/#%E5%BC%80%E5%A7%8B%E6%B8%B8%E6%88%8F)
+        /// [hy.startGame()](https://dev.huya.com/docs/miniapp/dev/game/api/#%E5%BC%80%E5%A7%8B%E6%B8%B8%E6%88%8F)
         /// 开始游戏时调用
         /// </summary>
-        public static void StartGame(StartGameOption callback)
+        public static void StartGame()
         {
-            HYSDKManagerHandler.Instance.StartGame(callback);
+            HYSDKManagerHandler.Instance.StartGame();
         }
 
-        /// <summary>
-        /// [hy.updateGameInfo(Object gameInfo)](https://dev.huya.com/docs/miniapp/dev/game/api/#%E6%9B%B4%E6%96%B0%E6%B8%B8%E6%88%8F%E4%BF%A1%E6%81%AF)
-        /// 更新游戏信息。在等级提升、关卡完成等时机调用。 - 入参请根据游戏实际情况提供
-        /// </summary>
-        public static void UpdateGameInfo(UpdateGameInfoOption callback)
-        {
-            HYSDKManagerHandler.Instance.UpdateGameInfo(callback);
-        }
         
-        /// <summary>
-        /// [hy.createRole(Object gameInfo)](https://dev.huya.com/docs/miniapp/dev/game/api/#%E5%88%9B%E5%BB%BA%E6%B8%B8%E6%88%8F%E8%A7%92%E8%89%B2)
-        /// 创建游戏角色时调用 - 入参请根据游戏实际情况提供
-        /// </summary>
-        public static void CreateRole(CreateRoleOption callback)
-        {
-            HYSDKManagerHandler.Instance.CreateRole(callback);
-        }
     }
 }
 #endif

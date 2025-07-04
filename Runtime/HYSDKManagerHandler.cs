@@ -347,20 +347,11 @@ namespace HuyaWASM
 #endregion
 
 #region 联运运营接口
-        public void StartGame(StartGameOption option)
+        public void StartGame()
 		{
-            CallJSFunction("hy", "startGame", option);
+            HY_OneWayNoFunction_v("startGame");
 		}
 
-        public void UpdateGameInfo(UpdateGameInfoOption option)
-		{
-            CallJSFunction("hy", "updateGameInfo", option);
-		}
-
-        public void CreateRole(CreateRoleOption option)
-		{
-            CallJSFunction("hy", "createRole", option);
-		}
 #endregion
     }
 }
