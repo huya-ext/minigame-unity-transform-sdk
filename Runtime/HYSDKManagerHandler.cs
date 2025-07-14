@@ -125,7 +125,7 @@ namespace HuyaWASM
 
         public void RemoveFirstScreen()
 		{
-			return HY_RemoveFirstScreen();
+			HY_RemoveFirstScreen();
 		}
 
         [DllImport("__Internal")]
@@ -348,7 +348,7 @@ namespace HuyaWASM
             {
                 GetSystemInfoOptionList = new Dictionary<string, GetSystemInfoOption>();
             }
-            this.OneWayFunction<GetSystemInfoOption, SystemInfo, RequestFailCallbackErr, GeneralCallbackResult>("getSystemInfo", option, GetSystemInfoOptionList);
+            this.OneWayFunction<GetSystemInfoOption, SystemInfo, RequestFailCallbackErr, GeneralCallbackResult>("GetSystemInfo", option, GetSystemInfoOptionList);
         }
 
         public void GetSystemInfoCallback(string msg)

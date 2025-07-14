@@ -394,7 +394,7 @@ namespace HuyaWASM
 		/// <summary>
 		/// 用户字体大小（单位px）
 		/// </summary>
-		public float fontSizeSetting;
+		// public float fontSizeSetting;
 		
 		/// <summary>
 		/// 客户端基础库版本
@@ -490,5 +490,24 @@ namespace HuyaWASM
 		/// 接口调用成功的回调函数
 		/// </summary>
 		public Action<GetNetworkTypeSuccessCallbackResult> success { get; set; }
+	}
+
+	[Preserve]
+	public class GetSystemInfoOption : ICallback<SystemInfo, RequestFailCallbackErr, GeneralCallbackResult>
+	{
+		/// <summary>
+		/// 接口调用结束的回调函数（调用成功、失败都会执行）
+		/// </summary>
+		public Action<GeneralCallbackResult> complete { get; set; }
+
+		/// <summary>
+		/// 接口调用失败的回调函数
+		/// </summary>
+		public Action<RequestFailCallbackErr> fail { get; set; }
+
+		/// <summary>
+		/// 接口调用成功的回调函数
+		/// </summary>
+		public Action<SystemInfo> success { get; set; }
 	}
 }
