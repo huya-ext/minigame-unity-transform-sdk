@@ -53,4 +53,16 @@ HY_CallJSFunctionWithReturn: function (sdkName, functionName, args) {
 HY_Invoke:function(functionName, successType, failType, completeType, conf, callbackId) {
     window.HYWASMSDK.HY_Invoke(_HYPointer_stringify_adaptor(functionName), _HYPointer_stringify_adaptor(successType), _HYPointer_stringify_adaptor(failType), _HYPointer_stringify_adaptor(completeType), _HYPointer_stringify_adaptor(conf), _HYPointer_stringify_adaptor(callbackId));
 },
+
+HY_SyncFunction_t: function(functionName, returnType){
+    var res = window.HYWASMSDK.HY_SyncFunction_t(_HYPointer_stringify_adaptor(functionName), _HYPointer_stringify_adaptor(returnType));
+    var bufferSize = lengthBytesUTF8(res || '') + 1;
+    var buffer = _malloc(bufferSize);
+    stringToUTF8((res || ''), buffer, bufferSize);
+    return buffer; 
+},
+
+HY_RemoveFirstScreen: function () {
+    window.__removeFirstScreen && window.__removeFirstScreen();
+},
 })

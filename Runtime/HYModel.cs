@@ -199,25 +199,6 @@ namespace HuyaWASM
 		public string streamerUnionId;
 	}
 
-	[Preserve]
-	public class GetSystemInfoAsyncOption : ICallback<SystemInfo, GeneralCallbackResult, GeneralCallbackResult>
-	{
-		/// <summary>
-		/// 接口调用结束的回调函数（调用成功、失败都会执行）
-		/// </summary>
-		public Action<GeneralCallbackResult> complete { get; set; }
-
-		/// <summary>
-		/// 接口调用失败的回调函数
-		/// </summary>
-		public Action<GeneralCallbackResult> fail { get; set; }
-
-		/// <summary>
-		/// 接口调用成功的回调函数
-		/// </summary>
-		public Action<SystemInfo> success { get; set; }
-	}
-
     [Preserve]
 	public class RequestPaymentOption : ICallback<GeneralCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>
 	{
@@ -351,44 +332,14 @@ namespace HuyaWASM
 	public class SystemInfo
 	{
 		/// <summary>
-		/// 平台，示例："android"，"ios"
+		/// 设备品牌
 		/// </summary>
-		public string platform;
+		public string brand;
 		
 		/// <summary>
-		/// 虎牙直播app版本
+		/// 设备型号
 		/// </summary>
-		public string version;
-		
-		/// <summary>
-		/// 虎牙直播app基础包版本
-		/// </summary>
-		public string baseVersion;
-		
-		/// <summary>
-		/// 屏幕宽度
-		/// </summary>
-		public float screenWidth;
-		
-		/// <summary>
-		/// 屏幕高度
-		/// </summary>
-		public float screenHeight;
-		
-		/// <summary>
-		/// 屏幕是否是横屏
-		/// </summary>
-		public bool isLandscape;
-		
-		/// <summary>
-		/// 可使用窗口宽度，单位 px
-		/// </summary>
-		public float windowWidth;
-		
-		/// <summary>
-		/// 可使用窗口高度，单位 px
-		/// </summary>
-		public float windowHeight;
+		public string model;
 		
 		/// <summary>
 		/// 设备像素比
@@ -396,19 +347,148 @@ namespace HuyaWASM
 		public float pixelRatio;
 		
 		/// <summary>
-		/// 状态栏的高度，单位 px
+		/// 屏幕宽度，单位px
+		/// </summary>
+		public float screenWidth;
+		
+		/// <summary>
+		/// 屏幕高度，单位px
+		/// </summary>
+		public float screenHeight;
+		
+		/// <summary>
+		/// 可使用窗口宽度，单位px
+		/// </summary>
+		public float windowWidth;
+		
+		/// <summary>
+		/// 可使用窗口高度，单位px
+		/// </summary>
+		public float windowHeight;
+		
+		/// <summary>
+		/// 状态栏的高度，单位px
 		/// </summary>
 		public float statusBarHeight;
 		
 		/// <summary>
-		/// 窗口上边缘的 y 值
+		/// 设置的语言
 		/// </summary>
-		public float screenTop;
+		public string language;
 		
 		/// <summary>
-		/// 在竖屏正方向下的安全区域。部分机型没有安全区域概念，则不返回 safeArea 字段
+		/// 虎牙版本号
+		/// </summary>
+		public string version;
+		
+		/// <summary>
+		/// 操作系统及版本
+		/// </summary>
+		public string system;
+		
+		/// <summary>
+		/// 客户端平台枚举, 值为：ios | android | ohos | windows | mac
+		/// </summary>
+		public string platform;
+		
+		/// <summary>
+		/// 用户字体大小（单位px）
+		/// </summary>
+		public float fontSizeSetting;
+		
+		/// <summary>
+		/// 客户端基础库版本
+		/// </summary>
+		public string SDKVersion;
+		
+		/// <summary>
+		/// 在竖屏正方向下的安全区域。部分机型没有安全区域概念，也不会返回 safeArea 字段，开发者需自行兼容。
 		/// </summary>
 		public SafeArea safeArea;
+		
+		/// <summary>
+		/// 设备方向，值为：portrait | landscape
+		/// </summary>
+		public string deviceOrientation;
+		
+		/// <summary>
+		/// 当前小程序运行的宿主环境信息
+		/// </summary>
+		public HostInfo host;
 	}
 
+	[Preserve]
+	public class HostInfo
+	{
+		/// <summary>
+		/// 宿主 app 对应的 appId
+		/// </summary>
+		public string appId;
+	}
+
+	[Preserve]
+	public class LaunchOptionsGame
+	{
+		/// <summary>
+		/// 启动小游戏的场景值，其值为：1000
+		/// </summary>
+		public double scene;
+
+		/// <summary>
+		/// 启动小游戏的 query 参数
+		/// </summary>
+		public Dictionary<string, string> query;
+
+		/// <summary>
+		/// 来源信息。从另一个小程序 或 App 进入小程序时返回。否则返回 {}。
+		/// </summary>
+		public EnterOptionsGameReferrerInfo referrerInfo;
+	}
+
+	[Preserve]
+	public class EnterOptionsGameReferrerInfo
+	{
+		/// <summary>
+		/// 来源小程序或 App 的 appId
+		/// </summary>
+		public string appId;
+
+		/// <summary>
+		/// 来源小程序传过来的数据
+		/// </summary>
+		public Dictionary<string, string> extraData;
+	}
+
+	[Preserve]
+	public class GetNetworkTypeSuccessCallbackResult
+	{
+		/// <summary>
+		/// 网络类型，其值为：'wifi' | '2g' | '3g' | '4g' | '5g' | 'unknown' | 'none'
+		/// </summary>
+		public string networkType;
+
+		/// <summary>
+		/// 设备是否使用了网络代理
+		/// </summary>
+		public bool hasSystemProxy;
+	}
+
+	[Preserve]
+	public class GetNetworkTypeOption : ICallback<GetNetworkTypeSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>
+	{
+		/// <summary>
+		/// 接口调用结束的回调函数（调用成功、失败都会执行）
+		/// </summary>
+		public Action<GeneralCallbackResult> complete { get; set; }
+
+		/// <summary>
+		/// 接口调用失败的回调函数
+		/// </summary>
+		public Action<RequestFailCallbackErr> fail { get; set; }
+
+		/// <summary>
+		/// 接口调用成功的回调函数
+		/// </summary>
+		public Action<GetNetworkTypeSuccessCallbackResult> success { get; set; }
+	}
 }

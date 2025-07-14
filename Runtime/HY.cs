@@ -33,6 +33,11 @@ namespace HuyaWASM
             return HYSDKManagerHandler.CallJSFunctionWithReturn(sdkName, functionName, args);
         }
 
+        public static void RemoveFirstScreen()
+        {
+            HYSDKManagerHandler.Instance.RemoveFirstScreen();
+        }
+
         /// <summary>
         /// [hy.getWindowInfo()](https://dev.huya.com/docs/miniapp/dev/game/api/#%E8%8E%B7%E5%8F%96%E7%AA%97%E5%8F%A3%E4%BF%A1%E6%81%AF)
         /// 获取窗口信息
@@ -70,6 +75,7 @@ namespace HuyaWASM
         }
 
         /// <summary>
+        /// [hy.getStreamerInfo(Object object)](https://dev.huya.com/docs/miniapp/dev/game/api/#%E8%8E%B7%E5%8F%96%E4%B8%BB%E6%92%AD%E4%BF%A1%E6%81%AF)
         /// 获取主播昵称和头像
         /// hy.getStreamerInfo(Object object)
         /// </summary>
@@ -79,12 +85,12 @@ namespace HuyaWASM
         }
         
         /// <summary>
-        /// [hy.getSystemInfoAsync(Object object)](https://dev.huya.com/docs/miniapp/dev/game/api/#%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF)
+        /// [hy.getSystemInfo(Object object)](https://dev.huya.com/docs/miniapp/dev/game/api/#%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF)
         /// 获取系统信息
         /// </summary>
-        public static void GetSystemInfoAsync(GetSystemInfoAsyncOption callback)
+        public static void GetSystemInfo(GetSystemInfoOption callback)
         {
-            HYSDKManagerHandler.Instance.GetSystemInfoAsync(callback);
+            HYSDKManagerHandler.Instance.GetSystemInfo(callback);
         }
 
         /// <summary>
@@ -106,7 +112,23 @@ namespace HuyaWASM
             HYSDKManagerHandler.Instance.StartGame();
         }
 
+        /// <summary>
+        /// [hyExt.env.getLaunchOptionsSync()](https://dev.huya.com/docs/miniapp/dev/game/api/#%E5%90%8C%E6%AD%A5%E8%8E%B7%E5%8F%96%E5%86%B7%E5%90%AF%E5%8A%A8%E6%97%B6%E7%9A%84%E5%8F%82%E6%95%B0)
+        /// 同步获取冷启动时的参数
+        /// </summary>
+        public static LaunchOptionsGame GetLaunchOptionsSync()
+        {
+            return HYSDKManagerHandler.Instance.GetLaunchOptionsSync();
+        }
         
+        /// <summary>
+        /// [hy.getNetworkType()](https://dev.huya.com/docs/miniapp/dev/game/api/#%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E7%B1%BB%E5%9E%8B)
+        /// 获取网络类型
+        /// </summary>
+        public static void GetNetworkType(GetNetworkTypeOption callback)
+        {
+            HYSDKManagerHandler.Instance.GetNetworkType(callback);
+        }
     }
 }
 #endif

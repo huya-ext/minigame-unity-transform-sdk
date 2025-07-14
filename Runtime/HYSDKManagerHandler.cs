@@ -120,11 +120,22 @@ namespace HuyaWASM
 			return HYCanIUse(key);
 		}
 
-		[DllImport("__Internal")]
-		private static extern void HY_CallJSFunction(string sdkName, string functionName, string text);
+        [DllImport("__Internal")]
+		private static extern void HY_RemoveFirstScreen();
+
+        public void RemoveFirstScreen()
+		{
+			return HY_RemoveFirstScreen();
+		}
+
+        [DllImport("__Internal")]
+		private static extern string HY_SyncFunction_t(string functionName, string returnType);
 
 		[DllImport("__Internal")]
-		private static extern string HY_CallJSFunctionWithReturn(string sdkName, string functionName, string text);
+		private static extern void HY_CallJSFunction(string sdkName, string functionName, string args);
+
+		[DllImport("__Internal")]
+		private static extern string HY_CallJSFunctionWithReturn(string sdkName, string functionName, string args);
 
 		public static void CallJSFunction(string sdkName, string functionName, params object[] args)
 		{
@@ -330,19 +341,40 @@ namespace HuyaWASM
 			return JsonMapper.ToObject<WindowInfoCallbackResult>(json);
 		}
 
-        private Dictionary<string, GetSystemInfoAsyncOption> GetSystemInfoAsyncOptionList;
-        public void GetSystemInfoAsync(GetSystemInfoAsyncOption option)
-		{
-			if (GetSystemInfoAsyncOptionList == null) 
+        private Dictionary<string, GetSystemInfoOption> GetSystemInfoOptionList;
+        public void GetSystemInfo(GetSystemInfoOption option)
+        {
+            if (GetSystemInfoOptionList == null) 
             {
-                GetSystemInfoAsyncOptionList = new Dictionary<string, GetSystemInfoAsyncOption>();
+                GetSystemInfoOptionList = new Dictionary<string, GetSystemInfoOption>();
             }
-			this.OneWayFunction<GetSystemInfoAsyncOption, SystemInfo, GeneralCallbackResult, GeneralCallbackResult>("GetSystemInfoAsync", option, GetSystemInfoAsyncOptionList);
+            this.OneWayFunction<GetSystemInfoOption, SystemInfo, RequestFailCallbackErr, GeneralCallbackResult>("getSystemInfo", option, GetSystemInfoOptionList);
+        }
+
+        public void GetSystemInfoCallback(string msg)
+        {
+            this.OneWayCallback<GetSystemInfoOption, SystemInfo, RequestFailCallbackErr, GeneralCallbackResult>(msg, GetSystemInfoOptionList);
+        }
+
+        public LaunchOptionsGame GetLaunchOptionsSync()
+        {
+            string json = HYSDKManagerHandler.HY_SyncFunction_t("GetLaunchOptionsSync", "LaunchOptionsGame");
+            return JsonMapper.ToObject<LaunchOptionsGame>(json);
+        }
+
+        private Dictionary<string, GetNetworkTypeOption> GetNetworkTypeOptionList;
+        public void GetNetworkType(GetNetworkTypeOption option)
+		{
+			if (GetNetworkTypeOptionList == null) 
+            {
+                GetNetworkTypeOptionList = new Dictionary<string, GetNetworkTypeOption>();
+            }
+			this.OneWayFunction<GetNetworkTypeOption, GetNetworkTypeSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>("GetNetworkType", option, GetNetworkTypeOptionList);
 		}
 
-		public void GetSystemInfoAsyncCallback(string msg)
+		public void GetNetworkTypeCallback(string msg)
 		{
-			this.OneWayCallback<GetSystemInfoAsyncOption, SystemInfo, GeneralCallbackResult, GeneralCallbackResult>(msg, GetSystemInfoAsyncOptionList);
+			this.OneWayCallback<GetNetworkTypeOption, GetNetworkTypeSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>(msg, GetNetworkTypeOptionList);
 		}
 #endregion
 
@@ -351,7 +383,6 @@ namespace HuyaWASM
 		{
             HY_OneWayNoFunction_v("startGame");
 		}
-
 #endregion
     }
 }
