@@ -65,24 +65,24 @@ namespace HuyaWASM
             HYSDKManagerHandler.Instance.CheckSession(callback);
         }
 
-        /// <summary>
-        /// [hy.getUserInfo(Object object)](https://dev.huya.com/docs/miniapp/dev/game/api/#%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
-        /// 获取用户信息
-        /// </summary>
-        public static void GetUserInfo(GetUserInfoOption callback)
-        {
-            HYSDKManagerHandler.Instance.GetUserInfo(callback);
-        }
+        // /// <summary>
+        // /// [hy.getUserInfo(Object object)](https://dev.huya.com/docs/miniapp/dev/game/api/#%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
+        // /// 获取用户信息
+        // /// </summary>
+        // public static void GetUserInfo(GetUserInfoOption callback)
+        // {
+        //     HYSDKManagerHandler.Instance.GetUserInfo(callback);
+        // }
 
-        /// <summary>
-        /// [hy.getStreamerInfo(Object object)](https://dev.huya.com/docs/miniapp/dev/game/api/#%E8%8E%B7%E5%8F%96%E4%B8%BB%E6%92%AD%E4%BF%A1%E6%81%AF)
-        /// 获取主播昵称和头像
-        /// hy.getStreamerInfo(Object object)
-        /// </summary>
-        public static void GetStreamerInfo(GetStreamerInfoOption callback)
-        {
-            HYSDKManagerHandler.Instance.GetStreamerInfo(callback);
-        }
+        // /// <summary>
+        // /// [hy.getStreamerInfo(Object object)](https://dev.huya.com/docs/miniapp/dev/game/api/#%E8%8E%B7%E5%8F%96%E4%B8%BB%E6%92%AD%E4%BF%A1%E6%81%AF)
+        // /// 获取主播昵称和头像
+        // /// hy.getStreamerInfo(Object object)
+        // /// </summary>
+        // public static void GetStreamerInfo(GetStreamerInfoOption callback)
+        // {
+        //     HYSDKManagerHandler.Instance.GetStreamerInfo(callback);
+        // }
         
         /// <summary>
         /// [hy.getSystemInfo(Object object)](https://dev.huya.com/docs/miniapp/dev/game/api/#%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF)
@@ -128,6 +128,24 @@ namespace HuyaWASM
         public static void GetNetworkType(GetNetworkTypeOption callback)
         {
             HYSDKManagerHandler.Instance.GetNetworkType(callback);
+        }
+
+        /// <summary>
+        /// hy.getUserInfoSafe(Object object)
+        /// 安全获取用户信息
+        /// </summary>
+        public static void GetUserInfoSafe(GetUserInfoSafeOption callback)
+        {
+            HYSDKManagerHandler.Instance.GetUserInfoSafe(callback);
+        }
+
+        /// <summary>
+        /// hy.getStreamerInfoSafe(Object object)
+        /// 安全获取主播信息
+        /// </summary>
+        public static void GetStreamerInfoSafe(GetStreamerInfoSafeOption callback)
+        {
+            HYSDKManagerHandler.Instance.GetStreamerInfoSafe(callback);
         }
     }
 }

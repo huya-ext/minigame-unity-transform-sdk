@@ -510,4 +510,42 @@ namespace HuyaWASM
 		/// </summary>
 		public Action<SystemInfo> success { get; set; }
 	}
+
+	[Preserve]
+	public class GetUserInfoSafeOption : ICallback<GetUserInfoSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>
+	{
+		/// <summary>
+		/// 接口调用结束的回调函数（调用成功、失败都会执行）
+		/// </summary>
+		public Action<GeneralCallbackResult> complete { get; set; }
+
+		/// <summary>
+		/// 接口调用失败的回调函数
+		/// </summary>
+		public Action<RequestFailCallbackErr> fail { get; set; }
+
+		/// <summary>
+		/// 接口调用成功的回调函数
+		/// </summary>
+		public Action<GetUserInfoSuccessCallbackResult> success { get; set; }
+	}
+
+	[Preserve]
+	public class GetStreamerInfoSafeOption : ICallback<GetStreamerInfoSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>
+	{
+		/// <summary>
+		/// 接口调用结束的回调函数（调用成功、失败都会执行）
+		/// </summary>
+		public Action<GeneralCallbackResult> complete { get; set; }
+
+		/// <summary>
+		/// 接口调用失败的回调函数
+		/// </summary>
+		public Action<RequestFailCallbackErr> fail { get; set; }
+
+		/// <summary>
+		/// 接口调用成功的回调函数
+		/// </summary>
+		public Action<GetStreamerInfoSuccessCallbackResult> success { get; set; }
+	}
 }

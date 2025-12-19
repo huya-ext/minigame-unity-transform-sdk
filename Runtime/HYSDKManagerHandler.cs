@@ -9,7 +9,8 @@ namespace HuyaWASM
 {
     public class HYSDKManagerHandler : MonoBehaviour
     {
-        public static string GetCallbackId<T>(Dictionary<string, T> dict) {
+        public static string GetCallbackId<T>(Dictionary<string, T> dict)
+        {
             var id = dict.Count;
             var res = (id + UnityEngine.Random.value).ToString();
             while (dict.ContainsKey(res))
@@ -21,42 +22,45 @@ namespace HuyaWASM
         }
 
         public void OneWayCallback<TConfig, TSuccess, TFail, TComplete>(string msg, Dictionary<string, TConfig> configList) where TConfig : class, ICallback<TSuccess, TFail, TComplete>, new()
-		{
-            if (!string.IsNullOrEmpty(msg) && configList != null) {
+        {
+            if (!string.IsNullOrEmpty(msg) && configList != null)
+            {
                 HYJSCallback jsCallback = JsonUtility.FromJson<HYJSCallback>(msg);
                 string callbackId = jsCallback.callbackId;
                 string type = jsCallback.type;
-				string res = jsCallback.res;
-                if (configList.ContainsKey(callbackId)) 
+                string res = jsCallback.res;
+                if (configList.ContainsKey(callbackId))
                 {
                     TConfig tconfig = configList[callbackId];
-                    if (type == "complete") 
+                    if (type == "complete")
                     {
                         Action<TComplete> complete = tconfig.complete;
-                        if (complete != null) 
+                        if (complete != null)
                         {
-							complete(JsonMapper.ToObject<TComplete>(res));
-						}
+                            complete(JsonMapper.ToObject<TComplete>(res));
+                        }
                         tconfig.complete = null;
-                    } else {
-                        if (type == "success") 
+                    }
+                    else
+                    {
+                        if (type == "success")
                         {
                             Action<TSuccess> success = tconfig.success;
-                            if (success != null) 
+                            if (success != null)
                             {
                                 success(JsonMapper.ToObject<TSuccess>(res));
                             }
-                        } 
+                        }
                         else if (type == "fail")
                         {
                             Action<TFail> fail = tconfig.fail;
-                            if (fail != null) 
+                            if (fail != null)
                             {
                                 fail(JsonMapper.ToObject<TFail>(res));
                             }
                         }
                         tconfig.success = null;
-						tconfig.fail = null;
+                        tconfig.fail = null;
                     }
                     if (tconfig.complete == null && tconfig.success == null && tconfig.fail == null)
                     {
@@ -64,160 +68,161 @@ namespace HuyaWASM
                     }
                 }
             }
-		}
+        }
 
         public void OneWayFunction<TConfig, TSuccess, TFail, TComplete>(string functionName, TConfig config, Dictionary<string, TConfig> configList) where TConfig : class, ICallback<TSuccess, TFail, TComplete>, new()
-		{
+        {
 #if !UNITY_WEBGL || UNITY_EDITOR
             Debug.LogError("需要在虎牙小游戏环境运行!");
             return;
 #endif
-			string successType = typeof(TSuccess).Name;
-			string failType = typeof(TFail).Name;
-			string completeType = typeof(TComplete).Name;
-			string callbackId = GetCallbackId<TConfig>(configList);
-			TConfig tconfig = Activator.CreateInstance<TConfig>();
-			tconfig.success = config.success;
-			tconfig.fail = config.fail;
-			tconfig.complete = config.complete;
-			TConfig tconfig2 = tconfig;
-			configList.Add(callbackId, tconfig2);
-			Action<TSuccess> success = config.success;
-			Action<TFail> fail = config.fail;
-			Action<TComplete> complete = config.complete;
-			config.success = null;
-			config.fail = null;
-			config.complete = null;
-			string text = JsonMapper.ToJson(config);
-			config.success = success;
-			config.fail = fail;
-			config.complete = complete;
-			HY_OneWayFunction(functionName, successType, failType, completeType, text, callbackId);
-		}
+            string successType = typeof(TSuccess).Name;
+            string failType = typeof(TFail).Name;
+            string completeType = typeof(TComplete).Name;
+            string callbackId = GetCallbackId<TConfig>(configList);
+            TConfig tconfig = Activator.CreateInstance<TConfig>();
+            tconfig.success = config.success;
+            tconfig.fail = config.fail;
+            tconfig.complete = config.complete;
+            TConfig tconfig2 = tconfig;
+            configList.Add(callbackId, tconfig2);
+            Action<TSuccess> success = config.success;
+            Action<TFail> fail = config.fail;
+            Action<TComplete> complete = config.complete;
+            config.success = null;
+            config.fail = null;
+            config.complete = null;
+            string text = JsonMapper.ToJson(config);
+            config.success = success;
+            config.fail = fail;
+            config.complete = complete;
+            HY_OneWayFunction(functionName, successType, failType, completeType, text, callbackId);
+        }
 
         [DllImport("__Internal")]
-		private static extern void HYPointer_stringify_adaptor(string str);
+        private static extern void HYPointer_stringify_adaptor(string str);
         [DllImport("__Internal")]
-		private static extern void HY_OneWayFunction(string functionName, string successType, string failType, string completeType, string conf, string callbackId);
+        private static extern void HY_OneWayFunction(string functionName, string successType, string failType, string completeType, string conf, string callbackId);
         [DllImport("__Internal")]
-		private static extern void HY_OneWayNoFunction_v(string functionName);
+        private static extern void HY_OneWayNoFunction_v(string functionName);
         [DllImport("__Internal")]
-		private static extern void HY_OneWayNoFunction_vs(string functionName, string param1);
+        private static extern void HY_OneWayNoFunction_vs(string functionName, string param1);
         [DllImport("__Internal")]
-		private static extern void HY_OneWayNoFunction_vt(string functionName, string param1);
+        private static extern void HY_OneWayNoFunction_vt(string functionName, string param1);
         [DllImport("__Internal")]
-		private static extern void HY_OneWayNoFunction_vst(string functionName, string param1, string param2);
+        private static extern void HY_OneWayNoFunction_vst(string functionName, string param1, string param2);
         [DllImport("__Internal")]
-		private static extern void HY_OneWayNoFunction_vsn(string functionName, string param1, string param2);
+        private static extern void HY_OneWayNoFunction_vsn(string functionName, string param1, string param2);
         [DllImport("__Internal")]
-		private static extern void HY_OneWayNoFunction_vnns(string functionName, string param1, string param2, string param3);
-
-		[DllImport("__Internal")]
-		private static extern bool HYCanIUse(string key);
-
-		public bool CanIUse(string key)
-		{
-			return HYCanIUse(key);
-		}
+        private static extern void HY_OneWayNoFunction_vnns(string functionName, string param1, string param2, string param3);
 
         [DllImport("__Internal")]
-		private static extern void HY_RemoveFirstScreen();
+        private static extern bool HYCanIUse(string key);
+
+        public bool CanIUse(string key)
+        {
+            return HYCanIUse(key);
+        }
+
+        [DllImport("__Internal")]
+        private static extern void HY_RemoveFirstScreen();
 
         public void RemoveFirstScreen()
-		{
-			HY_RemoveFirstScreen();
-		}
+        {
+            HY_RemoveFirstScreen();
+        }
 
         [DllImport("__Internal")]
-		private static extern string HY_SyncFunction_t(string functionName, string returnType);
+        private static extern string HY_SyncFunction_t(string functionName, string returnType);
 
-		[DllImport("__Internal")]
-		private static extern void HY_CallJSFunction(string sdkName, string functionName, string args);
+        [DllImport("__Internal")]
+        private static extern void HY_CallJSFunction(string sdkName, string functionName, string args);
 
-		[DllImport("__Internal")]
-		private static extern string HY_CallJSFunctionWithReturn(string sdkName, string functionName, string args);
+        [DllImport("__Internal")]
+        private static extern string HY_CallJSFunctionWithReturn(string sdkName, string functionName, string args);
 
-		public static void CallJSFunction(string sdkName, string functionName, params object[] args)
-		{
-			string text = JsonMapper.ToJson(args);
-			HY_CallJSFunction(sdkName, functionName, text);
-		}
+        public static void CallJSFunction(string sdkName, string functionName, params object[] args)
+        {
+            string text = JsonMapper.ToJson(args);
+            HY_CallJSFunction(sdkName, functionName, text);
+        }
 
-		public static string CallJSFunctionWithReturn(string sdkName, string functionName, params object[] args)
-		{
-			string text = JsonMapper.ToJson(args);
-			return HY_CallJSFunctionWithReturn(sdkName, functionName, text);
-		}
+        public static string CallJSFunctionWithReturn(string sdkName, string functionName, params object[] args)
+        {
+            string text = JsonMapper.ToJson(args);
+            return HY_CallJSFunctionWithReturn(sdkName, functionName, text);
+        }
 
 
         [DllImport("__Internal")]
-		private static extern void HY_Invoke(string functionName, string successType, string failType, string completeType, string conf, string callbackId);
+        private static extern void HY_Invoke(string functionName, string successType, string failType, string completeType, string conf, string callbackId);
 
         private Dictionary<string, InvokeOption> InvokeOptionList;
         public void Invoke(string functionName, InvokeOption option)
-		{
-			if (InvokeOptionList == null) 
+        {
+            if (InvokeOptionList == null)
             {
                 InvokeOptionList = new Dictionary<string, InvokeOption>();
             }
 
             string successType = typeof(string).Name;
-			string failType = typeof(RequestFailCallbackErr).Name;
-			string completeType = typeof(GeneralCallbackResult).Name;
-			string callbackId = GetCallbackId<InvokeOption>(InvokeOptionList);
-			InvokeOption tconfig = Activator.CreateInstance<InvokeOption>();
-			tconfig.success = option.success;
-			tconfig.fail = option.fail;
-			tconfig.complete = option.complete;
-			InvokeOption tconfig2 = tconfig;
-			InvokeOptionList.Add(callbackId, tconfig2);
-			Action<string> success = option.success;
-			Action<RequestFailCallbackErr> fail = option.fail;
-			Action<GeneralCallbackResult> complete = option.complete;
-			HY_Invoke(functionName, successType, failType, completeType, option.text, callbackId);
-		}
+            string failType = typeof(RequestFailCallbackErr).Name;
+            string completeType = typeof(GeneralCallbackResult).Name;
+            string callbackId = GetCallbackId<InvokeOption>(InvokeOptionList);
+            InvokeOption tconfig = Activator.CreateInstance<InvokeOption>();
+            tconfig.success = option.success;
+            tconfig.fail = option.fail;
+            tconfig.complete = option.complete;
+            InvokeOption tconfig2 = tconfig;
+            InvokeOptionList.Add(callbackId, tconfig2);
+            Action<string> success = option.success;
+            Action<RequestFailCallbackErr> fail = option.fail;
+            Action<GeneralCallbackResult> complete = option.complete;
+            HY_Invoke(functionName, successType, failType, completeType, option.text, callbackId);
+        }
 
-		public void InvokeCallback(string msg)
-		{
+        public void InvokeCallback(string msg)
+        {
             Debug.Log("InvokeCallback: " + msg);
 
-            if (!string.IsNullOrEmpty(msg) && InvokeOptionList != null) {
+            if (!string.IsNullOrEmpty(msg) && InvokeOptionList != null)
+            {
                 HYJSCallback jsCallback = JsonUtility.FromJson<HYJSCallback>(msg);
                 string callbackId = jsCallback.callbackId;
                 string type = jsCallback.type;
-				string res = jsCallback.res;
-                if (InvokeOptionList.ContainsKey(callbackId)) 
+                string res = jsCallback.res;
+                if (InvokeOptionList.ContainsKey(callbackId))
                 {
                     InvokeOption tconfig = InvokeOptionList[callbackId];
-                    if (type == "complete") 
+                    if (type == "complete")
                     {
                         Action<GeneralCallbackResult> complete = tconfig.complete;
-                        if (complete != null) 
+                        if (complete != null)
                         {
-							complete(JsonMapper.ToObject<GeneralCallbackResult>(res));
-						}
+                            complete(JsonMapper.ToObject<GeneralCallbackResult>(res));
+                        }
                         tconfig.complete = null;
-                    } 
-                    else 
+                    }
+                    else
                     {
-                        if (type == "success") 
+                        if (type == "success")
                         {
                             Action<string> success = tconfig.success;
-                            if (success != null) 
+                            if (success != null)
                             {
                                 success(res);
                             }
-                        } 
+                        }
                         else if (type == "fail")
                         {
                             Action<RequestFailCallbackErr> fail = tconfig.fail;
-                            if (fail != null) 
+                            if (fail != null)
                             {
                                 fail(JsonMapper.ToObject<RequestFailCallbackErr>(res));
                             }
                         }
                         tconfig.success = null;
-						tconfig.fail = null;
+                        tconfig.fail = null;
                     }
                     if (tconfig.complete == null && tconfig.success == null && tconfig.fail == null)
                     {
@@ -225,9 +230,9 @@ namespace HuyaWASM
                     }
                 }
             }
-		}
+        }
 
-#region Instance
+        #region Instance
         private static HYSDKManagerHandler instance = null;
 
         public static HYSDKManagerHandler Instance
@@ -253,98 +258,128 @@ namespace HuyaWASM
             if (instance != null)
                 instance = null;
         }
-#endregion
+        #endregion
 
-#region 登录
+        #region 登录
         private Dictionary<string, LoginOption> LoginOptionList;
         public void Login(LoginOption option)
-		{
-			if (LoginOptionList == null) 
+        {
+            if (LoginOptionList == null)
             {
                 LoginOptionList = new Dictionary<string, LoginOption>();
             }
-			this.OneWayFunction<LoginOption, LoginSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>("Login", option, LoginOptionList);
-		}
+            this.OneWayFunction<LoginOption, LoginSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>("Login", option, LoginOptionList);
+        }
 
-		public void LoginCallback(string msg)
-		{
-			this.OneWayCallback<LoginOption, LoginSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>(msg, LoginOptionList);
-		}
+        public void LoginCallback(string msg)
+        {
+            this.OneWayCallback<LoginOption, LoginSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>(msg, LoginOptionList);
+        }
 
         private Dictionary<string, CheckSessionOption> CheckSessionOptionList;
         public void CheckSession(CheckSessionOption option)
-		{
-			if (CheckSessionOptionList == null) 
+        {
+            if (CheckSessionOptionList == null)
             {
                 CheckSessionOptionList = new Dictionary<string, CheckSessionOption>();
             }
             this.OneWayFunction<CheckSessionOption, GeneralCallbackResult, GeneralCallbackResult, GeneralCallbackResult>("CheckSession", option, CheckSessionOptionList);
-		}
+        }
 
-		public void CheckSessionCallback(string msg)
-		{
-			this.OneWayCallback<CheckSessionOption, GeneralCallbackResult, GeneralCallbackResult, GeneralCallbackResult>(msg, CheckSessionOptionList);
-		}
+        public void CheckSessionCallback(string msg)
+        {
+            this.OneWayCallback<CheckSessionOption, GeneralCallbackResult, GeneralCallbackResult, GeneralCallbackResult>(msg, CheckSessionOptionList);
+        }
 
-        private Dictionary<string, GetUserInfoOption> GetUserInfoOptionList;
-        public void GetUserInfo(GetUserInfoOption option)
-		{
-			if (GetUserInfoOptionList == null) 
+        // private Dictionary<string, GetUserInfoOption> GetUserInfoOptionList;
+        // public void GetUserInfo(GetUserInfoOption option)
+        // {
+        //     if (GetUserInfoOptionList == null)
+        //     {
+        //         GetUserInfoOptionList = new Dictionary<string, GetUserInfoOption>();
+        //     }
+        //     this.OneWayFunction<GetUserInfoOption, GetUserInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>("GetUserInfo", option, GetUserInfoOptionList);
+        // }
+        //
+        // public void GetUserInfoCallback(string msg)
+        // {
+        //     this.OneWayCallback<GetUserInfoOption, GetUserInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>(msg, GetUserInfoOptionList);
+        // }
+        //
+        // private Dictionary<string, GetStreamerInfoOption> GetStreamerInfoOptionList;
+        // public void GetStreamerInfo(GetStreamerInfoOption option)
+        // {
+        //     if (GetStreamerInfoOptionList == null)
+        //     {
+        //         GetStreamerInfoOptionList = new Dictionary<string, GetStreamerInfoOption>();
+        //     }
+        //     this.OneWayFunction<GetStreamerInfoOption, GetStreamerInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>("GetStreamerInfo", option, GetStreamerInfoOptionList);
+        // }
+        //
+        // public void GetStreamerInfoCallback(string msg)
+        // {
+        //     this.OneWayCallback<GetStreamerInfoOption, GetStreamerInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>(msg, GetStreamerInfoOptionList);
+        // }
+
+        private Dictionary<string, GetUserInfoSafeOption> GetUserInfoSafeOptionList;
+        public void GetUserInfoSafe(GetUserInfoSafeOption option)
+        {
+            if (GetUserInfoSafeOptionList == null)
             {
-                GetUserInfoOptionList = new Dictionary<string, GetUserInfoOption>();
+                GetUserInfoSafeOptionList = new Dictionary<string, GetUserInfoSafeOption>();
             }
-            this.OneWayFunction<GetUserInfoOption, GetUserInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>("GetUserInfo", option, GetUserInfoOptionList);
-		}
+            this.OneWayFunction<GetUserInfoSafeOption, GetUserInfoSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>("GetUserInfoSafe", option, GetUserInfoSafeOptionList);
+        }
 
-		public void GetUserInfoCallback(string msg)
-		{
-			this.OneWayCallback<GetUserInfoOption, GetUserInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>(msg, GetUserInfoOptionList);
-		}
+        public void GetUserInfoSafeCallback(string msg)
+        {
+            this.OneWayCallback<GetUserInfoSafeOption, GetUserInfoSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>(msg, GetUserInfoSafeOptionList);
+        }
 
-        private Dictionary<string, GetStreamerInfoOption> GetStreamerInfoOptionList;
-        public void GetStreamerInfo(GetStreamerInfoOption option)
-		{
-			if (GetStreamerInfoOptionList == null) 
+        private Dictionary<string, GetStreamerInfoSafeOption> GetStreamerInfoSafeOptionList;
+        public void GetStreamerInfoSafe(GetStreamerInfoSafeOption option)
+        {
+            if (GetStreamerInfoSafeOptionList == null)
             {
-                GetStreamerInfoOptionList = new Dictionary<string, GetStreamerInfoOption>();
+                GetStreamerInfoSafeOptionList = new Dictionary<string, GetStreamerInfoSafeOption>();
             }
-            this.OneWayFunction<GetStreamerInfoOption, GetStreamerInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>("GetStreamerInfo", option, GetStreamerInfoOptionList);
-		}
+            this.OneWayFunction<GetStreamerInfoSafeOption, GetStreamerInfoSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>("GetStreamerInfoSafe", option, GetStreamerInfoSafeOptionList);
+        }
 
-		public void GetStreamerInfoCallback(string msg)
-		{
-			this.OneWayCallback<GetStreamerInfoOption, GetStreamerInfoSuccessCallbackResult, GeneralCallbackResult, GeneralCallbackResult>(msg, GetStreamerInfoOptionList);
-		}
-#endregion
+        public void GetStreamerInfoSafeCallback(string msg)
+        {
+            this.OneWayCallback<GetStreamerInfoSafeOption, GetStreamerInfoSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>(msg, GetStreamerInfoSafeOptionList);
+        }
+        #endregion
 
-#region 支付
+        #region 支付
         private Dictionary<string, RequestPaymentOption> RequestPaymentOptionList;
         public void RequestPayment(RequestPaymentOption option)
-		{
-			if (RequestPaymentOptionList == null) 
+        {
+            if (RequestPaymentOptionList == null)
             {
                 RequestPaymentOptionList = new Dictionary<string, RequestPaymentOption>();
             }
-			this.OneWayFunction<RequestPaymentOption, GeneralCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>("RequestPayment", option, RequestPaymentOptionList);
-		}
+            this.OneWayFunction<RequestPaymentOption, GeneralCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>("RequestPayment", option, RequestPaymentOptionList);
+        }
 
-		public void RequestPaymentCallback(string msg)
-		{
-			this.OneWayCallback<RequestPaymentOption, GeneralCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>(msg, RequestPaymentOptionList);
-		}
-#endregion
+        public void RequestPaymentCallback(string msg)
+        {
+            this.OneWayCallback<RequestPaymentOption, GeneralCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>(msg, RequestPaymentOptionList);
+        }
+        #endregion
 
-#region 系统
+        #region 系统
         public WindowInfoCallbackResult GetWindowInfo()
-		{
-			string json = CallJSFunctionWithReturn("hy", "getWindowInfo", "{}");
-			return JsonMapper.ToObject<WindowInfoCallbackResult>(json);
-		}
+        {
+            string json = CallJSFunctionWithReturn("hy", "getWindowInfo", "{}");
+            return JsonMapper.ToObject<WindowInfoCallbackResult>(json);
+        }
 
         private Dictionary<string, GetSystemInfoOption> GetSystemInfoOptionList;
         public void GetSystemInfo(GetSystemInfoOption option)
         {
-            if (GetSystemInfoOptionList == null) 
+            if (GetSystemInfoOptionList == null)
             {
                 GetSystemInfoOptionList = new Dictionary<string, GetSystemInfoOption>();
             }
@@ -364,25 +399,25 @@ namespace HuyaWASM
 
         private Dictionary<string, GetNetworkTypeOption> GetNetworkTypeOptionList;
         public void GetNetworkType(GetNetworkTypeOption option)
-		{
-			if (GetNetworkTypeOptionList == null) 
+        {
+            if (GetNetworkTypeOptionList == null)
             {
                 GetNetworkTypeOptionList = new Dictionary<string, GetNetworkTypeOption>();
             }
-			this.OneWayFunction<GetNetworkTypeOption, GetNetworkTypeSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>("GetNetworkType", option, GetNetworkTypeOptionList);
-		}
+            this.OneWayFunction<GetNetworkTypeOption, GetNetworkTypeSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>("GetNetworkType", option, GetNetworkTypeOptionList);
+        }
 
-		public void GetNetworkTypeCallback(string msg)
-		{
-			this.OneWayCallback<GetNetworkTypeOption, GetNetworkTypeSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>(msg, GetNetworkTypeOptionList);
-		}
-#endregion
+        public void GetNetworkTypeCallback(string msg)
+        {
+            this.OneWayCallback<GetNetworkTypeOption, GetNetworkTypeSuccessCallbackResult, RequestFailCallbackErr, GeneralCallbackResult>(msg, GetNetworkTypeOptionList);
+        }
+        #endregion
 
-#region 联运运营接口
+        #region 联运运营接口
         public void StartGame()
-		{
+        {
             HY_OneWayNoFunction_v("startGame");
-		}
-#endregion
+        }
+        #endregion
     }
 }
