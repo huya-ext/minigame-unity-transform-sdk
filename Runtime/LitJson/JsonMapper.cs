@@ -305,6 +305,98 @@ namespace LitJson
             return op;
         }
 
+        static readonly Type[] scalar_value_types = new Type[] {
+            typeof (string), typeof (bool),
+            typeof (byte), typeof (sbyte), typeof (short), typeof (ushort),
+            typeof (int), typeof (uint), typeof (long), typeof (ulong),
+            typeof (float), typeof (double), typeof (decimal)
+        };
+
+        private static bool IsScalarType (Type type)
+        {
+            return Array.IndexOf (scalar_value_types, type) >= 0;
+        }
+
+        /// <summary>
+        /// 标量宽松转换，仅在 LitJson 内建的导入器都匹配不上时兜底。
+        /// 虎牙各端回包的标量类型并不总与文档一致（同一个字段可能返回 number 或 string，也可能为 null），
+        /// 而 WebGL 下从 JS 侧 SendMessage 进来的调用栈里抛出的异常会直接 abort 整个游戏，
+        /// 因此这里把 number / string / bool 之间的常见偏差转掉；
+        /// 确实无法转换的值（如 "abc" 对应 int）仍返回 null，由调用方抛出原始错误。
+        /// </summary>
+        private static object CoerceScalar (object value, Type json_type, Type target_type)
+        {
+            if (!IsScalarType (json_type) || !IsScalarType (target_type))
+                return null;
+
+            string text;
+            if (json_type == typeof (bool))
+                text = ((bool) value) ? "1" : "0";
+            else
+                text = Convert.ToString (value, CultureInfo.InvariantCulture);
+
+            if (text == null)
+                return null;
+
+            if (target_type == typeof (string))
+                return text;
+
+            string trimmed = text.Trim ();
+
+            if (target_type == typeof (bool)) {
+                bool bool_value;
+                if (bool.TryParse (trimmed, out bool_value))
+                    return bool_value;
+
+                double bool_number;
+                if (double.TryParse (trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out bool_number))
+                    return bool_number != 0.0;
+
+                return null;
+            }
+
+            if (target_type == typeof (float) || target_type == typeof (double) || target_type == typeof (decimal)) {
+                decimal dec;
+                if (decimal.TryParse (trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out dec)) {
+                    if (target_type == typeof (float))
+                        return (float) dec;
+                    if (target_type == typeof (double))
+                        return (double) dec;
+                    return dec;
+                }
+
+                double num;
+                if (double.TryParse (trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out num)
+                    && !double.IsNaN (num) && !double.IsInfinity (num)) {
+                    if (target_type == typeof (float))
+                        return (float) num;
+                    if (target_type == typeof (double))
+                        return num;
+                }
+
+                return null;
+            }
+
+            // 整数目标只接受纯整数文本，避免把 "1.5" 悄悄截断成 1
+            long int_value;
+            if (long.TryParse (trimmed, NumberStyles.Integer, CultureInfo.InvariantCulture, out int_value)) {
+                try {
+                    if (target_type == typeof (int)) return checked ((int) int_value);
+                    if (target_type == typeof (long)) return int_value;
+                    if (target_type == typeof (uint)) return checked ((uint) int_value);
+                    if (target_type == typeof (ulong)) return checked ((ulong) int_value);
+                    if (target_type == typeof (short)) return checked ((short) int_value);
+                    if (target_type == typeof (ushort)) return checked ((ushort) int_value);
+                    if (target_type == typeof (byte)) return checked ((byte) int_value);
+                    if (target_type == typeof (sbyte)) return checked ((sbyte) int_value);
+                } catch (OverflowException) {
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
         private static object ReadValue (Type inst_type, JsonReader reader)
         {
             reader.Read ();
@@ -325,6 +417,11 @@ namespace LitJson
                     return null;
                 }
                 #endif
+
+                // 值类型字段收到 null 时按默认值处理，理由同 CoerceScalar：
+                // 不能让平台一个空字段毁掉整次回包，甚至让游戏 abort
+                if (value_type.IsValueType)
+                    return Activator.CreateInstance (value_type);
 
                 throw new JsonException (String.Format (
                             "Can't assign null to an instance of type {0}",
@@ -378,6 +475,12 @@ namespace LitJson
                 if (conv_op != null)
                     return conv_op.Invoke (null,
                                            new object[] { reader.Value });
+
+                // 兜底的标量宽松转换
+                object coerced = CoerceScalar (reader.Value, json_type, value_type);
+
+                if (coerced != null)
+                    return coerced;
 
                 // No luck
                 throw new JsonException (String.Format (

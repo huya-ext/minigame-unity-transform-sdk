@@ -126,7 +126,12 @@ namespace HuyaWASM
 	public class GetUserInfoSuccessCallbackResult
 	{
 		/// <summary>
-		/// 用户昵称
+		/// 用户昵称（hyExt.context.getUserInfoSafe 的实际返回字段）
+		/// </summary>
+		public string userNick;
+
+		/// <summary>
+		/// 用户昵称，旧命名，仅作兼容保留；getUserInfoSafe 返回的是 userNick
 		/// </summary>
 		public string nickName;
 
@@ -189,9 +194,9 @@ namespace HuyaWASM
 		public int streamerLevel;
 
 		/// <summary>
-		/// 房间Id
+		/// 房间Id；平台返回的是字符串（未开播时为 "0"）
 		/// </summary>
-		public int streamerRoomId;
+		public string streamerRoomId;
 
 		/// <summary>
 		/// 主播unionId，没有则为空

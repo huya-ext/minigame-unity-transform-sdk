@@ -147,6 +147,35 @@ namespace HuyaWASM
         {
             HYSDKManagerHandler.Instance.GetStreamerInfoSafe(callback);
         }
+
+        /// <summary>
+        /// [hy.createRewardedVideoAd(Object object)](https://developers.weixin.qq.com/minigame/dev/api/ad/wx.createRewardedVideoAd.html)
+        /// 创建激励视频广告组件，返回的对象可调用 Load / Show / Destroy，并监听 OnLoad / OnError / OnClose 事件
+        /// 可用 HY.CanIUse("CreateRewardedVideoAd") 判断当前基础库是否支持
+        /// </summary>
+        public static HYRewardedVideoAd CreateRewardedVideoAd(HYCreateRewardedVideoAdParam param)
+        {
+            return HYSDKManagerHandler.Instance.CreateRewardedVideoAd(param);
+        }
+
+        /// <summary>
+        /// [hy.createCustomAd(Object object)](https://developers.weixin.qq.com/minigame/dev/api/ad/wx.createCustomAd.html)
+        /// 创建原生模板广告组件，返回的对象可调用 Show / Hide / IsShow / Destroy，并监听 OnLoad / OnError / OnClose / OnHide / OnResize 事件
+        /// 可用 HY.CanIUse("CreateCustomAd") 判断当前基础库是否支持
+        /// </summary>
+        public static HYCustomAd CreateCustomAd(HYCreateCustomAdParam param)
+        {
+            return HYSDKManagerHandler.Instance.CreateCustomAd(param);
+        }
+
+        /// <summary>
+        /// hy.getRewardInfoByResId(Object object)
+        /// 按广告单元 id 获取奖励信息，用于展示当前广告可领取的奖品
+        /// </summary>
+        public static void GetRewardInfoByResId(GetRewardInfoByResIdOption callback)
+        {
+            HYSDKManagerHandler.Instance.GetRewardInfoByResId(callback);
+        }
     }
 }
 #endif
